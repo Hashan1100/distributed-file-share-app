@@ -1,7 +1,7 @@
 # distributed-file-share-app
 
 ## How to get the project
-`git clone git@github.com:Hashan1100/distributed-file-share-app.git`
+`git clone https://github.com/Hashan1100/distributed-file-share-app.git`
 
 ## Specification
 * Java version : openjdk 11
