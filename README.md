@@ -1,5 +1,8 @@
 # distributed-file-share-app
 
+## How to get the project
+`git clone git@github.com:Hashan1100/distributed-file-share-app.git`
+
 ## Specification
 * Java version : openjdk 11
 * maven : 3.6 (> 3.2)
