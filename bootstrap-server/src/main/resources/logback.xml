@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_PATH" value="/uom/logs/bootstrap-server"/>
+    <property name="LOG_PATH" value="../uom/logs/bootstrap-server"/>
 
     <variable name="FRAMEWORK_LOG_LEVEL" value="${FRAMEWORK_LOG_LEVEL:-ERROR}" />
 
