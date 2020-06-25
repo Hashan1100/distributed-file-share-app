@@ -10,6 +10,7 @@
     <modules>
         <module>bootstrap-server</module>
         <module>network-node</module>
+        <module>protocol-translator</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -23,6 +24,11 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.uom.dist</groupId>
+                <artifactId>protocol-translator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter</artifactId>
