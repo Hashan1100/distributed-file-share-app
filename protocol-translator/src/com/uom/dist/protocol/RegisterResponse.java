@@ -1,5 +1,7 @@
 package com.uom.dist.protocol;
 
+import java.util.List;
+
 public class RegisterResponse extends Protocol {
     private String noNodes;
     private String Ip1;
@@ -17,7 +19,14 @@ public class RegisterResponse extends Protocol {
         setLength();
     }
 
-
+    public RegisterResponse(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.REGOK);
+        this.noNodes = messagePartList.get(2);
+        this.Ip1 = messagePartList.get(3);
+        this.port1 = messagePartList.get(4);
+        this.Ip2 = messagePartList.get(5);
+        this.port2 = messagePartList.get(6);
+    }
     public String getNoNodes() {
         return noNodes;
     }

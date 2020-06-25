@@ -1,12 +1,19 @@
 package com.uom.dist.protocol;
 
-public class LeaveRegisterResponse extends Protocol {
+import java.util.List;
+
+public class LeaveResponse extends Protocol {
     private String value;
 
-    public LeaveRegisterResponse(String value) {
+    public LeaveResponse(String value) {
         super(COMMAND.LEAVEOK);
         this.value = value;
         setLength();
+    }
+
+    public LeaveResponse(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.REG);
+        this.value = messagePartList.get(2);
     }
 
     protected String getProtocolStringPart() {

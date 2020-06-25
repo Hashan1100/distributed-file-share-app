@@ -1,14 +1,22 @@
 package com.uom.dist.protocol;
 
-public class JoinRegisterRequest extends Protocol {
+import java.util.List;
+
+public class JoinRequest extends Protocol {
     private String ipAddress;
     private String port;
 
-    public JoinRegisterRequest(String ipAddress, String port, String userName) {
+    public JoinRequest(String ipAddress, String port, String userName) {
         super(COMMAND.JOIN);
         this.ipAddress = ipAddress;
         this.port = port;
         setLength();
+    }
+
+    public JoinRequest(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.REG);
+        this.ipAddress = messagePartList.get(2);
+        this.port = messagePartList.get(3);
     }
 
     public String getIpAddress() {

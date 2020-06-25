@@ -1,5 +1,7 @@
 package com.uom.dist.protocol;
 
+import java.util.List;
+
 public class RegisterRequest extends Protocol {
     private String ipAddress;
     private String port;
@@ -11,6 +13,20 @@ public class RegisterRequest extends Protocol {
         this.port = port;
         this.userName = userName;
         setLength();
+    }
+
+    public RegisterRequest(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.REG);
+        this.ipAddress = messagePartList.get(2);
+        this.port = messagePartList.get(3);
+        this.userName = messagePartList.get(4);
+    }
+
+    public RegisterRequest(String length, String ipAddress, String port, String userName) {
+        super(length, COMMAND.REG);
+        this.ipAddress = ipAddress;
+        this.port = port;
+        this.userName = userName;
     }
 
     public String getIpAddress() {

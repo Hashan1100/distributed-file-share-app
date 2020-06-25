@@ -15,7 +15,18 @@ public class SearchResponse extends Protocol {
         super(COMMAND.SEROK);
         this.fileNames = Arrays.asList(fileNames);
         this.noOfFiles = noOfFiles;
+        this.ip = ip;
+        this.hops = hops;
         setLength();
+    }
+
+    public SearchResponse(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.SEROK);
+        this.noOfFiles = Integer.parseInt(messagePartList.get(2));
+        this.ip = messagePartList.get(3);
+        this.port = messagePartList.get(4);
+        this.hops = Integer.parseInt(messagePartList.get(4));
+        this.fileNames = messagePartList.subList(5, messagePartList.size() - 1);
     }
 
     public int getNoOfFiles() {

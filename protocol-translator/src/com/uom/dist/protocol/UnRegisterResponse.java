@@ -1,5 +1,7 @@
 package com.uom.dist.protocol;
 
+import java.util.List;
+
 public class UnRegisterResponse extends Protocol {
     private String value;
 
@@ -7,6 +9,11 @@ public class UnRegisterResponse extends Protocol {
         super(COMMAND.UNROK);
         this.value = value;
         setLength();
+    }
+
+    public UnRegisterResponse(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.REG);
+        this.value = messagePartList.get(2);
     }
 
     public String getValue() {

@@ -20,6 +20,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.uom.dist</groupId>
+            <artifactId>protocol-translator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>

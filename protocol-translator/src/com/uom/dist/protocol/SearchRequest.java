@@ -1,5 +1,7 @@
 package com.uom.dist.protocol;
 
+import java.util.List;
+
 public class SearchRequest extends Protocol {
     private String ipAddress;
     private String port;
@@ -13,6 +15,14 @@ public class SearchRequest extends Protocol {
         this.fileName = fileName;
         this.hops = hops;
         setLength();
+    }
+
+    public SearchRequest(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.SER);
+        this.ipAddress = messagePartList.get(2);
+        this.port = messagePartList.get(3);
+        this.fileName = messagePartList.get(4);
+        this.hops = Integer.parseInt(messagePartList.get(5));
     }
 
     public String getIpAddress() {

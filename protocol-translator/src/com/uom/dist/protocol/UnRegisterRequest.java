@@ -1,5 +1,7 @@
 package com.uom.dist.protocol;
 
+import java.util.List;
+
 public class UnRegisterRequest extends Protocol {
     private String ipAddress;
     private String port;
@@ -11,6 +13,13 @@ public class UnRegisterRequest extends Protocol {
         this.port = port;
         this.userName = userName;
         setLength();
+    }
+
+    public UnRegisterRequest(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.UNREG);
+        this.ipAddress = messagePartList.get(2);
+        this.port = messagePartList.get(3);
+        this.userName = messagePartList.get(4);
     }
 
     public String getIpAddress() {

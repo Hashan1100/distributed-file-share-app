@@ -1,9 +1,15 @@
 package com.uom.dist.protocol;
 
+import java.util.List;
+
 public class ErrorResponse extends Protocol {
     public ErrorResponse() {
         super(COMMAND.ERROR);
         setLength();
+    }
+
+    public ErrorResponse(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.REG);
     }
 
     protected String getProtocolStringPart() {

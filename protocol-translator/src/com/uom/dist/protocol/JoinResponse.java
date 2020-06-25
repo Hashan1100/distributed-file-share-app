@@ -1,12 +1,19 @@
 package com.uom.dist.protocol;
 
-public class JoinRegisterResponse extends Protocol {
+import java.util.List;
+
+public class JoinResponse extends Protocol {
     private String value;
 
-    public JoinRegisterResponse(String value) {
+    public JoinResponse(String value) {
         super(COMMAND.JOINOK);
         this.value = value;
         setLength();
+    }
+
+    public JoinResponse(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.REG);
+        this.value = messagePartList.get(2);
     }
 
     protected String getProtocolStringPart() {

@@ -1,15 +1,18 @@
 package com.uom.dist.node;
 
+import com.uom.dist.protocol.SharedConfigurationReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @SpringBootApplication
+@Import(SharedConfigurationReference.class)
 public class NetworkNodeApplication {
     private static final Logger logger = LoggerFactory.getLogger(NetworkNodeApplication.class);
 

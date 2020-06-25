@@ -1,13 +1,18 @@
 package com.uom.dist.protocol;
 
 public abstract class Protocol {
-    public enum COMMAND { REG, REGOK, UNREG, UNROK, JOIN, JOINOK, LEAVE, LEAVEOK, SER, SEROK, ERROR}
+    public static enum COMMAND { REG, REGOK, UNREG, UNROK, JOIN, JOINOK, LEAVE, LEAVEOK, SER, SEROK, ERROR}
 
     private String length;
     private COMMAND command;
 
     public Protocol(COMMAND command) {
         this.command = command;
+    }
+
+    public Protocol(String length, COMMAND command) {
+        this.command = command;
+        this.length = length;
     }
 
     public String getLength() {

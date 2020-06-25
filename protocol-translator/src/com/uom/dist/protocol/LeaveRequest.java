@@ -1,14 +1,22 @@
 package com.uom.dist.protocol;
 
-public class LeaveRegisterRequest extends Protocol {
+import java.util.List;
+
+public class LeaveRequest extends Protocol {
     private String ipAddress;
     private String port;
 
-    public LeaveRegisterRequest(String ipAddress, String port, String userName) {
+    public LeaveRequest(String ipAddress, String port, String userName) {
         super(COMMAND.LEAVE);
         this.ipAddress = ipAddress;
         this.port = port;
         setLength();
+    }
+
+    public LeaveRequest(List<String> messagePartList) {
+        super(messagePartList.get(0), COMMAND.REG);
+        this.ipAddress = messagePartList.get(2);
+        this.port = messagePartList.get(3);
     }
 
     public String getIpAddress() {
