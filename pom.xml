@@ -8,9 +8,9 @@
     <artifactId>distributed-file-share-app</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
+        <module>common</module>
         <module>bootstrap-server</module>
         <module>network-node</module>
-        <module>protocol-translator</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -26,7 +26,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.uom.dist</groupId>
-                <artifactId>protocol-translator</artifactId>
+                <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
