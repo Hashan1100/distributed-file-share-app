@@ -14,3 +14,9 @@
 * Build will appear in target folder
 * Go the `target/<module-name>/bin` and run
 `<./module-name console>`
+
+## Dockerize the app
+* Run the code below
+```bash
+docker run -it --rm --name distributed-file-share-app -v "$(pwd)":/root -w /root adoptopenjdk/maven-openjdk11:latest mvn clean install -DskipTest
+```
