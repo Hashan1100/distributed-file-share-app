@@ -21,11 +21,17 @@ public class RegisterResponse extends Protocol {
 
     public RegisterResponse(List<String> messagePartList) {
         super(messagePartList.get(0), COMMAND.REGOK);
-        this.noNodes = messagePartList.get(2);
-        this.Ip1 = messagePartList.get(3);
-        this.port1 = messagePartList.get(4);
-        this.Ip2 = messagePartList.get(5);
-        this.port2 = messagePartList.get(6);
+        if(messagePartList.size() >= 3) {
+            this.noNodes = messagePartList.get(2);
+        }
+        if (messagePartList.size() >= 5) {
+            this.Ip1 = messagePartList.get(3);
+            this.port1 = messagePartList.get(4);
+        }
+        if (messagePartList.size() >= 7) {
+            this.Ip2 = messagePartList.get(5);
+            this.port2 = messagePartList.get(6);
+        }
     }
     public String getNoNodes() {
         return noNodes;
