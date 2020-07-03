@@ -24,6 +24,9 @@ public class RegisterService {
     @Value("${node.username}")
     private String nodeUserName;
 
+    @Value("${udp.receiver.url}")
+    private String udpUrl;
+
     @Autowired
     private Node nodeServer;
 
@@ -33,7 +36,7 @@ public class RegisterService {
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
 
     public void register(){
-        Protocol registerRequest = new RegisterRequest("127.0.0.1", udpPort + "", nodeUserName);
+        Protocol registerRequest = new RegisterRequest(udpUrl, udpPort + "", nodeUserName);
         logger.debug("Sending register request [{}]", registerRequest.serialize());
         nodeServer.send(registerRequest, bootstrapServerUrl, bootstrapServerPort);
     }
