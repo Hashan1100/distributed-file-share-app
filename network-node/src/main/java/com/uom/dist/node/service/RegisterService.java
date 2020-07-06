@@ -42,12 +42,12 @@ public class RegisterService {
     }
 
     public void registerResponseHandler(RegisterResponse registerResponse) throws Exception {
-        if (isNodeAvailable(registerResponse.getIp1(), registerResponse.getIp1())) {
+        if (isNodeAvailable(registerResponse.getIp1(), registerResponse.getPort1())) {
             routingService.insertIntoNodeList(registerResponse.getIp1(),
                     Integer.parseInt(registerResponse.getPort1()));
         }
 
-        if (isNodeAvailable(registerResponse.getIp2(), registerResponse.getIp2())) {
+        if (isNodeAvailable(registerResponse.getIp2(), registerResponse.getPort2())) {
             routingService.insertIntoNodeList(registerResponse.getIp2(),
                     Integer.parseInt(registerResponse.getPort2()));
         }
