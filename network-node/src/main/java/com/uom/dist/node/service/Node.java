@@ -67,7 +67,7 @@ public class Node {
 
                 try {
                     Protocol request = protocolFactory.decode(s);
-                    logger.debug("Decoded message [{}]", request);
+                    logger.debug("Decoded message [{}]", new Gson().toJson(request));
                     if (request instanceof RegisterResponse) {
                         registerService.registerResponseHandler((RegisterResponse) request);
                     } else if (request instanceof SearchRequest) {
@@ -90,8 +90,8 @@ public class Node {
 
     public void send(Protocol protocol, String url, int port) {
         if (sock != null) {
-            logger.debug("Sending request [{}]", new Gson().toJson(protocol));
             String msgString = protocol.serialize();
+            logger.debug("Sending request [{}]", msgString);
             try {
                 DatagramPacket sendPacket = new DatagramPacket(msgString.getBytes() , msgString.getBytes().length , InetAddress.getByName(url), port);
                 sock.send(sendPacket);

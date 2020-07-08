@@ -15,11 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -46,6 +43,9 @@ public class FileService {
     @Value("${udp.receiver.url}")
     private String udpUrl;
 
+    @Value("${node.username}")
+    private String nodeUserName;
+
     @Autowired
     private Node node;
 
@@ -56,7 +56,7 @@ public class FileService {
         this.loadingCache = CacheBuilder
                 .newBuilder()
                 .maximumSize(100)
-                .expireAfterAccess(2, TimeUnit.SECONDS)
+                .expireAfterAccess(5, TimeUnit.SECONDS)
                 .build(
                         new CacheLoader<String, SearchRequest>() {
                             public SearchRequest load(String message) throws Exception {
@@ -66,13 +66,18 @@ public class FileService {
                         });
     }
 
-    public List<String> findFile(String fileName) {
+    public List<String> findFile(String fileName) throws Exception {
+        if (fileName == null) {
+            throw new Exception("File name is null");
+        }
         logger.debug("Finding files with for the file name: [{}]", fileName);
         List<String> files = fileList
                 .stream()
-                .filter(fileElement -> Objects.equals(fileElement, fileName))
+                .filter(fileElement ->
+                        fileElement.contains(fileName.replaceAll("^\"|\"$", "")))
+                .map(file -> "\"" + file + "\"")
                 .collect(Collectors.toList());
-        logger.debug("Files found: [{}]", files);
+        logger.debug("Files found: [{}] in node: [{}]", files, nodeUserName);
         return files;
     }
 
@@ -87,14 +92,13 @@ public class FileService {
 
     public void search(SearchRequest searchRequest) throws Exception {
         try {
-            SearchRequest request = loadingCache.get(searchRequest.serialize());
+            SearchRequest request = loadingCache.getIfPresent(searchRequest.serialize());
             if (request == null) {
                 loadingCache.put(searchRequest.serialize(), searchRequest);
                 List<String> files = fileService.findFile(searchRequest.getFileName());
                 if (!files.isEmpty()) {
                     SearchResponse searchResponse = new SearchResponse(files.size(), udpUrl, udpPort + "",
                             searchRequest.getHops() + 1, files);
-                    logger.debug("Search response: [{}]", new Gson().toJson(searchResponse));
                     logger.debug("Files found sending search response to origin node url: [{}], port: [{}]",
                             searchRequest.getIpAddress(), searchRequest.getPort());
                     node.send(searchResponse, searchRequest.getIpAddress(), Integer.parseInt(searchRequest.getPort()));
@@ -106,7 +110,7 @@ public class FileService {
                 logger.debug("Search request: [{}] already in the cache, So assuming request has already arrived " +
                         "in this node. ignoring the request", request.serialize());
             }
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             logger.error("Error while fetching from the cache ", e);
             throw new Exception("Error while fetching from the cache");
         }
