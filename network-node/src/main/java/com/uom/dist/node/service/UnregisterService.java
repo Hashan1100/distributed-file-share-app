@@ -29,23 +29,18 @@ public class UnregisterService {
 
     @Autowired
     private RoutingService routingService;
+    public String status;
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
 
     public void Unregister(){
         Protocol unRegisterRequest = new UnRegisterRequest(udpUrl, udpPort + "", nodeUserName);
-        logger.debug("Sending register request [{}]", unRegisterRequest.serialize());
+        logger.debug("Sending unregister request [{}]", unRegisterRequest.serialize());
         nodeUnserver.send(unRegisterRequest, bootstrapServerUrl, bootstrapServerPort);
     }
 
     public void UnregisterResponseHandler (UnRegisterResponse unregisterResponse) throws Exception{
-        if(isNodeAvailable(udpUrl, udpPort+"")){
-            //need to implement
-        }
-    }
-
-    private boolean isNodeAvailable(String url, String port) {
-        return url != null &&
-                port != null;
+        status = unregisterResponse.getValue();
+        //remove from routing table implementation
     }
 }
