@@ -2,6 +2,7 @@ package com.uom.dist.node.service;
 
 import com.uom.dist.protocol.Protocol;
 import com.uom.dist.protocol.UnRegisterRequest;
+import com.uom.dist.protocol.UnRegisterResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,16 @@ public class UnregisterService {
         Protocol unRegisterRequest = new UnRegisterRequest(udpUrl, udpPort + "", nodeUserName);
         logger.debug("Sending register request [{}]", unRegisterRequest.serialize());
         nodeUnserver.send(unRegisterRequest, bootstrapServerUrl, bootstrapServerPort);
+    }
+
+    public void UnregisterResponseHandler (UnRegisterResponse unregisterResponse) throws Exception{
+        if(isNodeAvailable(udpUrl, udpPort+"")){
+            //need to implement
+        }
+    }
+
+    private boolean isNodeAvailable(String url, String port) {
+        return url != null &&
+                port != null;
     }
 }
