@@ -42,6 +42,10 @@ public class RoutingService {
     }
 
     public void sendSearchRequests(SearchRequest searchRequest) {
+        if (routingTable.isEmpty()) {
+            logger.debug("No neighbours in the routing table");
+        }
+
         routingTable.forEach(connectedNode -> {
             SearchRequest request = new SearchRequest(connectedNode.getNodeIp(),
                     connectedNode.getNodePort() + "",

@@ -3,9 +3,15 @@ package com.uom.dist.protocol.service;
 import com.uom.dist.protocol.*;
 import com.uom.dist.protocol.Protocol.COMMAND;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Component
 public class ProtocolFactoryImpl implements ProtocolFactory {
@@ -47,10 +53,17 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
                         return new LeaveResponse(valueList);
                     }
                     case SER: {
-                        return new SearchRequest(valueList);
+                        String fileName = getFileNameForSearchRequest(message);
+                        String[] listToStringArray = StringUtils.delimitedListToStringArray(message, " ", fileName + " ");
+                        List<String> stringList = Arrays.stream(listToStringArray)
+                                .filter(s -> !s.isEmpty() || !s.isBlank())
+                                .collect(Collectors.toList());
+                        return new SearchRequest(stringList, fileName);
                     }
                     case SEROK: {
-                        return new SearchResponse(valueList);
+                        List<String> fileList = getFileNamesForSearchResponse(message);
+                        List<String> listWithoutNames = valueList.subList(0, 6);
+                        return new SearchResponse(listWithoutNames, fileList);
                     }
                     case ERROR: {
                         return new ErrorResponse(valueList);
@@ -69,6 +82,29 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         } else {
             throw new Exception("Message can't be null");
         }
+    }
+
+    private String getFileNameForSearchRequest(String message) {
+        Matcher m = getMatcher(message);
+        if(m.find()) {
+            return m.group(0);
+        } else {
+            return "";
+        }
+    }
+
+    private Matcher getMatcher(String message) {
+        Pattern p = Pattern.compile("\"([^\"]*)\"");
+        return p.matcher(message);
+    }
+
+    private List<String> getFileNamesForSearchResponse(String message) {
+        ArrayList<String> nameList = new ArrayList<>();
+        Matcher m = getMatcher(message);
+        while (m.find()) {
+            nameList.add(m.group(0));
+        }
+        return nameList;
     }
 
     @Override

@@ -17,12 +17,12 @@ public class SearchRequest extends Protocol {
         setLength();
     }
 
-    public SearchRequest(List<String> messagePartList) {
+    public SearchRequest(List<String> messagePartList, String fileName) {
         super(messagePartList.get(0), COMMAND.SER);
         this.ipAddress = messagePartList.get(2);
         this.port = messagePartList.get(3);
-        this.fileName = messagePartList.get(4);
-        this.hops = Integer.parseInt(messagePartList.get(5));
+        this.fileName = fileName;
+        this.hops = Integer.parseInt(messagePartList.get(4).replaceAll("\\s+",""));
     }
 
     public String getIpAddress() {
@@ -46,7 +46,7 @@ public class SearchRequest extends Protocol {
     }
 
     protected String getProtocolStringPart() {
-        return " " + super.getCommand().toString() + " " + ipAddress + " " + port;
+        return " " + super.getCommand().toString() + " " + ipAddress + " " + port + " " + fileName + " " + hops;
     }
 
     public String serialize() {

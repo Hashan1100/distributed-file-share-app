@@ -31,13 +31,13 @@ public class SearchResponse extends Protocol {
         setLength();
     }
 
-    public SearchResponse(List<String> messagePartList) {
+    public SearchResponse(List<String> messagePartList, List<String> fileList) {
         super(messagePartList.get(0), COMMAND.SEROK);
         this.noOfFiles = Integer.parseInt(messagePartList.get(2));
         this.ip = messagePartList.get(3);
         this.port = messagePartList.get(4);
-        this.hops = Integer.parseInt(messagePartList.get(4));
-        this.fileNames = messagePartList.subList(5, messagePartList.size() - 1);
+        this.hops = Integer.parseInt(messagePartList.get(5));
+        this.fileNames = fileList;
     }
 
     public int getNoOfFiles() {
