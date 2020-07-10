@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UnregisterService {
     @Value("${udp.receiver.port}")
     private int udpPort;
@@ -24,11 +26,8 @@ public class UnregisterService {
     @Value("${udp.receiver.url}")
     private String udpUrl;
 
-    @Autowired
-    private Node nodeUnserver;
+    private RemoveNode removeNode;
 
-    @Autowired
-    private RoutingService routingService;
     public String status;
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
@@ -36,7 +35,7 @@ public class UnregisterService {
     public void Unregister(){
         Protocol unRegisterRequest = new UnRegisterRequest(udpUrl, udpPort + "", nodeUserName);
         logger.debug("Sending unregister request [{}]", unRegisterRequest.serialize());
-        nodeUnserver.send(unRegisterRequest, bootstrapServerUrl, bootstrapServerPort);
+        removeNode.send(unRegisterRequest, bootstrapServerUrl, bootstrapServerPort);
     }
 
     public void UnregisterResponseHandler (UnRegisterResponse unregisterResponse) throws Exception{
