@@ -28,6 +28,8 @@ public class UnregisterService {
 
     private RemoveNode removeNode;
 
+    private RoutingService routingService;
+
     public String status;
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
@@ -40,6 +42,7 @@ public class UnregisterService {
 
     public void UnregisterResponseHandler (UnRegisterResponse unregisterResponse) throws Exception{
         status = unregisterResponse.getValue();
-        //remove from routing table implementation
+        // remove from routing table implementation
+        routingService.removeFromNodeList(udpUrl, udpPort);
     }
 }
