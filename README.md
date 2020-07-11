@@ -29,6 +29,18 @@ echo <request_length> SER <node_port> <node_ip> \"<file_name>\" 0 > /dev/udp/<no
 ```
 * Result file urls will be printed in <node_port> <node_ip> is debug log.
 
+## How to build and bootstrap server
+* Build the application.
+* Bootstrap server will be in ```target/bootstrap-server/```
+* Change the following values accordingly
+```$xslt
+server.port=
+udp.receiver.port=
+```
+* server.port and udp.receiver.port need to be different
+* Bootstrap server actually starts in udp.receiver.port
+* Run the application according the Operating system using files in ```target/bootstrap-server/bin/```
+
 ## How to get multiple nodes
 
 * Build the application
@@ -44,3 +56,5 @@ file.list=
 * Each node should have **unique udp.receiver.port or udp.receiver.url or both and unique user name.**
 * server.port and udp.receiver.port need to be different
 * udp.receiver.port is the actual node port 
+* Node will be in ```target/network-node/```
+* Run the application according the Operating system using files in ```target/network-node/bin/```
