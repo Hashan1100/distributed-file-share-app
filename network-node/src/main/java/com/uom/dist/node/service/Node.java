@@ -40,6 +40,9 @@ public class Node {
     @Autowired
     private ProtocolFactory protocolFactory;
 
+    @Autowired
+    private JoinService joinService;
+
     @PostConstruct
     public void init() {
         executor.submit(this::start);
@@ -63,7 +66,10 @@ public class Node {
                 byte[] data = incoming.getData();
                 s = new String(data, 0, incoming.getLength());
 
-                logger.debug(incoming.getAddress().getHostAddress() + " : " + incoming.getPort() + " - " + s);
+                String hostAddress = incoming.getAddress().getHostAddress();
+                int port = incoming.getPort();
+
+                logger.debug(hostAddress + " : " + port + " - " + s);
 
                 try {
                     Protocol request = protocolFactory.decode(s);
@@ -78,6 +84,10 @@ public class Node {
                         leaveNodeService.handleLeaveRequest((LeaveRequest) request);
                     } else if (request instanceof LeaveResponse) {
                         leaveNodeService.handleLeaveResponse((LeaveResponse) request);
+                    } else if (request instanceof JoinRequest) {
+                        joinService.handleJoin((JoinRequest) request);
+                    } else if (request instanceof JoinResponse) {
+                        joinService.handleJoinResponse((JoinResponse) request, hostAddress, port);
                     }
                 } catch (Exception e) {
                     logger.error("Error occurred while trying to decode request", e);

@@ -25,8 +25,6 @@ public class UnregisterService {
     @Value("${udp.receiver.url}")
     private String udpUrl;
 
-    private RemoveNode removeNode;
-
     private RoutingService routingService;
 
     public String status;
@@ -36,7 +34,6 @@ public class UnregisterService {
     public void Unregister() {
         Protocol unRegisterRequest = new UnRegisterRequest(udpUrl, udpPort + "", nodeUserName);
         logger.debug("Sending unregister request [{}]", unRegisterRequest.serialize());
-        removeNode.send(unRegisterRequest, bootstrapServerUrl, bootstrapServerPort);
     }
 
     public void UnregisterResponseHandler(UnRegisterResponse unregisterResponse) throws Exception {

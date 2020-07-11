@@ -3,21 +3,21 @@ package com.uom.dist.protocol;
 import java.util.List;
 
 public class JoinResponse extends Protocol {
-    private String value;
+    private String status;
 
-    public JoinResponse(String value) {
+    public JoinResponse(String status) {
         super(COMMAND.JOINOK);
-        this.value = value;
+        this.status = status;
         setLength();
     }
 
     public JoinResponse(List<String> messagePartList) {
-        super(messagePartList.get(0), COMMAND.REG);
-        this.value = messagePartList.get(2);
+        super(messagePartList.get(0), COMMAND.JOINOK);
+        this.status = messagePartList.get(2);
     }
 
     protected String getProtocolStringPart() {
-        return " " + super.getCommand().toString() + " " + value;
+        return " " + super.getCommand().toString() + " " + status;
     }
 
     public String serialize() {
@@ -29,5 +29,9 @@ public class JoinResponse extends Protocol {
         String protocolStringPart = getProtocolStringPart();
         String length = String.format("%04d", protocolStringPart.length() + 4);
         super.setLength(length);
+    }
+
+    public String getStatus() {
+        return status;
     }
 }
