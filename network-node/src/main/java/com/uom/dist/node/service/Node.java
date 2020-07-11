@@ -32,6 +32,9 @@ public class Node {
     private RegisterService registerService;
 
     @Autowired
+    private LeaveNodeService leaveNodeService;
+
+    @Autowired
     private FileService fileService;
 
     @Autowired
@@ -80,6 +83,10 @@ public class Node {
                         fileService.search((SearchRequest) request);
                     } else if (request instanceof SearchResponse) {
                         fileService.handleSearchResponse((SearchResponse) request);
+                    } else if (request instanceof LeaveRequest) {
+                        leaveNodeService.handleLeaveRequest((LeaveRequest) request);
+                    } else if (request instanceof LeaveResponse) {
+                        leaveNodeService.handleLeaveResponse((LeaveResponse) request);
                     } else if (request instanceof JoinRequest) {
                         joinService.handleJoin((JoinRequest) request);
                     } else if (request instanceof JoinResponse) {
