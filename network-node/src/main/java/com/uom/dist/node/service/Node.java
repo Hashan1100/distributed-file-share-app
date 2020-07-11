@@ -32,10 +32,10 @@ public class Node {
     private RegisterService registerService;
 
     @Autowired
-    private LeaveNodeService leaveNodeService;
+    private UnregisterService unregisterService;
 
     @Autowired
-    private UnregisterService unregisterService;
+    private LeaveNodeService leaveNodeService;
 
     @Autowired
     private FileService fileService;

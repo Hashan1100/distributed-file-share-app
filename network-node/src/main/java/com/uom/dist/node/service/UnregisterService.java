@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
+
 @Component
 public class UnregisterService {
     @Value("${udp.receiver.port}")
@@ -33,6 +35,7 @@ public class UnregisterService {
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
 
+    @PreDestroy
     public void Unregister() {
         Protocol unRegisterRequest = new UnRegisterRequest(udpUrl, udpPort + "", nodeUserName);
         logger.debug("Sending unregister request [{}]", unRegisterRequest.serialize());
