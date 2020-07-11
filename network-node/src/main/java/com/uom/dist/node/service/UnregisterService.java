@@ -37,8 +37,11 @@ public class UnregisterService {
     }
 
     public void UnregisterResponseHandler(UnRegisterResponse unregisterResponse) throws Exception {
-        status = unregisterResponse.getValue();
-        // remove from routing table implementation
-        routingService.removeFromNodeList(udpUrl, udpPort);
+        try{
+            status = unregisterResponse.getValue();
+            logger.debug("Sending unregister response [{}]" + status, unregisterResponse.serialize());
+        }catch (Exception e){
+            logger.debug("Respoding to unregister failed...");
+        }
     }
 }
