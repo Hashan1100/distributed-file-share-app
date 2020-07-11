@@ -5,7 +5,6 @@ import com.uom.dist.protocol.UnRegisterRequest;
 import com.uom.dist.protocol.UnRegisterResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +33,13 @@ public class UnregisterService {
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
 
-    public void Unregister(){
+    public void Unregister() {
         Protocol unRegisterRequest = new UnRegisterRequest(udpUrl, udpPort + "", nodeUserName);
         logger.debug("Sending unregister request [{}]", unRegisterRequest.serialize());
         removeNode.send(unRegisterRequest, bootstrapServerUrl, bootstrapServerPort);
     }
 
-    public void UnregisterResponseHandler (UnRegisterResponse unregisterResponse) throws Exception{
+    public void UnregisterResponseHandler(UnRegisterResponse unregisterResponse) throws Exception {
         status = unregisterResponse.getValue();
         // remove from routing table implementation
         routingService.removeFromNodeList(udpUrl, udpPort);
