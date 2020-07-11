@@ -33,6 +33,18 @@ public class RoutingService {
         }
     }
 
+    public void removeFromNodeList(String url, int port) throws Exception {
+        ConnectedNode connectedNode = new ConnectedNode(url, port);
+        if (routingTable.contains(connectedNode)) {
+            logger.debug("Removing the node from routing table, url: [{}], port: [{}]", connectedNode.getNodeIp(), connectedNode.getNodePort());
+            routingTable.remove(connectedNode);
+            logger.debug("Node removed successfully [{}]", getRoutingTableValues());
+        } else {
+            logger.error("Node already left from the routing table");
+            throw new Exception("Node already left from the routing table");
+        }
+    }
+
     public List<ConnectedNode> getRoutingTable() {
         return routingTable;
     }
