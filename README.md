@@ -14,3 +14,10 @@
 * Build will appear in target folder
 * Go the `target/<module-name>/bin` and run
 `<./module-name console>`
+
+## Print routing table via telnet using nc (For linux systems)
+* Connect to node using following command
+```$xslt
+nc -u <node-ip> <port>
+```
+* Enter command ```PRINT``` and press Enter

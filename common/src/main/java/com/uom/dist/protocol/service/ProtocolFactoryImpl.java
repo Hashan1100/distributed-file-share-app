@@ -20,11 +20,15 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         if (message != null) {
             String[] values = message.split(" ");
             List<String> valueList = Arrays.asList(values);
-            if (valueList.size() <= 1) {
+            if (valueList.size() < 1) {
                 throw new Exception("Invalid message");
             }
-
-            String type = valueList.get(1);
+            String type;
+            if (valueList.size() == 1) {
+                type = valueList.get(0).replace("\n", "");
+            } else {
+                type = valueList.get(1);
+            }
             COMMAND command = Protocol.COMMAND.valueOf(type);
             try {
                 switch (command) {
@@ -67,6 +71,9 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
                     }
                     case ERROR: {
                         return new ErrorResponse(valueList);
+                    }
+                    case PRINT: {
+                        return new PrintResponse(valueList);
                     }
                     default: {
                         throw new Exception("Unsupported command");

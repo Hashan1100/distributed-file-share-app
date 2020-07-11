@@ -2,6 +2,7 @@ package com.uom.dist.node.service;
 
 import com.google.gson.Gson;
 import com.uom.dist.node.service.domain.ConnectedNode;
+import com.uom.dist.protocol.PrintResponse;
 import com.uom.dist.protocol.SearchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,14 @@ public class RoutingService {
 
     public List<ConnectedNode> getRoutingTable() {
         return routingTable;
+    }
+
+    public void handlePrint(String url, int port) {
+        String routingTableString = new Gson().toJson(routingTable);
+        logger.debug("Routing table : [{}]", routingTableString);
+        System.out.println(routingTableString);
+        PrintResponse response = new PrintResponse(routingTableString);
+        node.send(response, url, port);
     }
 
     public String getRoutingTableValues() {

@@ -1,7 +1,7 @@
 package com.uom.dist.protocol;
 
 public abstract class Protocol {
-    public static enum COMMAND { REG, REGOK, UNREG, UNROK, JOIN, JOINOK, LEAVE, LEAVEOK, SER, SEROK, ERROR}
+    public static enum COMMAND { REG, REGOK, UNREG, UNROK, JOIN, JOINOK, LEAVE, LEAVEOK, SER, SEROK, ERROR, PRINT}
 
     private String length;
     private COMMAND command;
