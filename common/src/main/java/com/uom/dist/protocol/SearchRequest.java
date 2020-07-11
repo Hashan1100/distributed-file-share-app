@@ -54,6 +54,10 @@ public class SearchRequest extends Protocol {
         return super.getLength() + protocolStringPart;
     }
 
+    public String cacheKey() {
+        return super.getCommand().toString() + "|" + ipAddress + "|" + port + "|" + fileName;
+    }
+
     public void setLength() {
         String protocolStringPart = getProtocolStringPart();
         String length = String.format("%04d", protocolStringPart.length() + 4);

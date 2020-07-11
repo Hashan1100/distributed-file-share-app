@@ -20,16 +20,38 @@ public class RoutingService {
     private ArrayList<ConnectedNode> routingTable = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(RoutingService.class);
 
-    public void insertIntoNodeList(String url, int port) throws Exception {
+    public boolean insertIntoNodeList(String url, int port) {
         ConnectedNode connectedNode = new ConnectedNode(url, port);
         if (!routingTable.contains(connectedNode)) {
             logger.debug("Inserting into routing table url : [{}], port : [{}]"
                     , connectedNode.getNodeIp(), connectedNode.getNodePort());
-            routingTable.add(connectedNode);
-            logger.debug("Inserting into routing table success [{}]", getRoutingTableValues());
+            boolean add = routingTable.add(connectedNode);
+            if (add) {
+                logger.debug("Inserting into routing table success [{}]", getRoutingTableValues());
+            } else {
+                logger.error("Inserting into routing table failed [{}]", getRoutingTableValues());
+            }
+            return add;
         } else {
             logger.error("Node is already available in the routing table");
-            throw new Exception("Node is already connected");
+            return false;
+        }
+    }
+
+    public boolean removeFromRoutingTable(ConnectedNode connectedNode) {
+        if (routingTable.contains(connectedNode)) {
+            logger.debug("Removing from routing table url : [{}], port : [{}]"
+                    , connectedNode.getNodeIp(), connectedNode.getNodePort());
+            boolean remove = routingTable.remove(connectedNode);
+            if (remove) {
+                logger.debug("Removing from routing table success [{}]", getRoutingTableValues());
+            } else {
+                logger.error("Removing from routing table failed [{}]", getRoutingTableValues());
+            }
+            return remove;
+        } else {
+            logger.debug("Node is not available in routing table");
+            return true;
         }
     }
 
@@ -47,8 +69,8 @@ public class RoutingService {
         }
 
         routingTable.forEach(connectedNode -> {
-            SearchRequest request = new SearchRequest(connectedNode.getNodeIp(),
-                    connectedNode.getNodePort() + "",
+            SearchRequest request = new SearchRequest(searchRequest.getIpAddress(),
+                    searchRequest.getPort(),
                     searchRequest.getFileName(),
                     searchRequest.getHops() + 1);
             logger.debug("Sending search request");
