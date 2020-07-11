@@ -1,10 +1,7 @@
 package com.uom.dist.node.service;
 
 import com.google.gson.Gson;
-import com.uom.dist.protocol.Protocol;
-import com.uom.dist.protocol.RegisterResponse;
-import com.uom.dist.protocol.SearchRequest;
-import com.uom.dist.protocol.SearchResponse;
+import com.uom.dist.protocol.*;
 import com.uom.dist.protocol.service.ProtocolFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +30,9 @@ public class Node {
 
     @Autowired
     private RegisterService registerService;
+
+    @Autowired
+    private UnregisterService unregisterService;
 
     @Autowired
     private FileService fileService;
@@ -74,6 +74,10 @@ public class Node {
                         fileService.search((SearchRequest) request);
                     } else if (request instanceof SearchResponse) {
                         fileService.handleSearchResponse((SearchResponse) request);
+                    } else if (request instanceof UnRegisterRequest) {
+                        unregisterService.Unregister();
+                    } else if (request instanceof UnRegisterResponse){
+                        unregisterService.UnregisterResponseHandler((UnRegisterResponse) request);
                     }
                 } catch (Exception e) {
                     logger.error("Error occurred while trying to decode request", e);
