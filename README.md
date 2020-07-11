@@ -42,3 +42,5 @@ udp.receiver.url=
 file.list=
 ```
 * Each node should have **unique udp.receiver.port or udp.receiver.url or both and unique user name.**
+* server.port and udp.receiver.port need to be different
+* udp.receiver.port is the actual node port 
