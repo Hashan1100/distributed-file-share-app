@@ -35,6 +35,9 @@ public class Node {
     private LeaveNodeService leaveNodeService;
 
     @Autowired
+    private UnregisterService unregisterService;
+
+    @Autowired
     private FileService fileService;
 
     @Autowired
@@ -88,7 +91,12 @@ public class Node {
                         joinService.handleJoin((JoinRequest) request);
                     } else if (request instanceof JoinResponse) {
                         joinService.handleJoinResponse((JoinResponse) request, hostAddress, port);
+                    }else if (request instanceof UnRegisterRequest) {
+                        unregisterService.Unregister();
+                    } else if (request instanceof UnRegisterResponse){
+                        unregisterService.UnregisterResponseHandler((UnRegisterResponse) request);
                     }
+
                 } catch (Exception e) {
                     logger.error("Error occurred while trying to decode request", e);
                 }
