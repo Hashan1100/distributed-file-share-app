@@ -89,17 +89,15 @@ public class Node {
                     } else if (request instanceof LeaveRequest) {
                         leaveNodeService.handleLeaveRequest((LeaveRequest) request);
                     } else if (request instanceof LeaveResponse) {
-                        leaveNodeService.handleLeaveResponse((LeaveResponse) request);
+                        leaveNodeService.handleLeaveResponse((LeaveResponse) request, incomingAddress, incomingPort);
                     } else if (request instanceof JoinRequest) {
                         joinService.handleJoin((JoinRequest) request);
                     } else if (request instanceof JoinResponse) {
                         joinService.handleJoinResponse((JoinResponse) request, incomingAddress, incomingPort);
                     } else if (request instanceof PrintResponse) {
                         routingService.handlePrint(incomingAddress, incomingPort);
-                    }else if (request instanceof UnRegisterRequest) {
-                        unregisterService.Unregister();
                     } else if (request instanceof UnRegisterResponse){
-                        unregisterService.UnregisterResponseHandler((UnRegisterResponse) request);
+                        unregisterService.unregisterResponseHandler((UnRegisterResponse) request);
                     }
 
                 } catch (Exception e) {

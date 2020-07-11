@@ -6,7 +6,7 @@ public class LeaveRequest extends Protocol {
     private String ipAddress;
     private String port;
 
-    public LeaveRequest(String ipAddress, String port, String userName) {
+    public LeaveRequest(String ipAddress, String port) {
         super(COMMAND.LEAVE);
         this.ipAddress = ipAddress;
         this.port = port;
@@ -14,7 +14,7 @@ public class LeaveRequest extends Protocol {
     }
 
     public LeaveRequest(List<String> messagePartList) {
-        super(messagePartList.get(0), COMMAND.REG);
+        super(messagePartList.get(0), COMMAND.LEAVE);
         this.ipAddress = messagePartList.get(2);
         this.port = messagePartList.get(3);
     }

@@ -12,7 +12,7 @@ public class UnRegisterResponse extends Protocol {
     }
 
     public UnRegisterResponse(List<String> messagePartList) {
-        super(messagePartList.get(0), COMMAND.REG);
+        super(messagePartList.get(0), COMMAND.UNROK);
         this.value = messagePartList.get(2);
     }
 

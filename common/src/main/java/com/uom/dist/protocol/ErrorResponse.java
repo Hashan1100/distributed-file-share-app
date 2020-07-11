@@ -9,7 +9,7 @@ public class ErrorResponse extends Protocol {
     }
 
     public ErrorResponse(List<String> messagePartList) {
-        super(messagePartList.get(0), COMMAND.REG);
+        super(messagePartList.get(0), COMMAND.ERROR);
     }
 
     protected String getProtocolStringPart() {

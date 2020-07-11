@@ -3,6 +3,7 @@ package com.uom.dist.node.service;
 import com.google.gson.Gson;
 import com.uom.dist.node.service.domain.ConnectedNode;
 import com.uom.dist.protocol.PrintResponse;
+import com.uom.dist.protocol.Protocol;
 import com.uom.dist.protocol.SearchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class RoutingService {
@@ -23,7 +25,7 @@ public class RoutingService {
 
     public boolean insertIntoNodeList(String url, int port) {
         ConnectedNode connectedNode = new ConnectedNode(url, port);
-        if (!routingTable.contains(connectedNode)) {
+        if (!isInTable(url, port)) {
             logger.debug("Inserting into routing table url : [{}], port : [{}]"
                     , connectedNode.getNodeIp(), connectedNode.getNodePort());
             boolean add = routingTable.add(connectedNode);
@@ -40,10 +42,12 @@ public class RoutingService {
     }
 
     public boolean removeFromRoutingTable(ConnectedNode connectedNode) {
-        if (routingTable.contains(connectedNode)) {
+        if (isInTable(connectedNode.getNodeIp(), connectedNode.getNodePort())) {
             logger.debug("Removing from routing table url : [{}], port : [{}]"
                     , connectedNode.getNodeIp(), connectedNode.getNodePort());
-            boolean remove = routingTable.remove(connectedNode);
+            boolean remove = routingTable
+                    .removeIf(node1 -> node1.getNodePort() == connectedNode.getNodePort()
+                            && Objects.equals(node1.getNodeIp(), connectedNode.getNodeIp()));
             if (remove) {
                 logger.debug("Removing from routing table success [{}]", getRoutingTableValues());
             } else {
@@ -56,16 +60,28 @@ public class RoutingService {
         }
     }
 
-    public void removeFromNodeList(String url, int port) throws Exception {
+    public boolean removeFromNodeList(String url, int port) {
         ConnectedNode connectedNode = new ConnectedNode(url, port);
-        if (routingTable.contains(connectedNode)) {
+        boolean inTable = isInTable(url, port);
+        if (inTable) {
             logger.debug("Removing the node from routing table, url: [{}], port: [{}]", connectedNode.getNodeIp(), connectedNode.getNodePort());
-            routingTable.remove(connectedNode);
-            logger.debug("Node removed successfully [{}]", getRoutingTableValues());
+            boolean remove = routingTable
+                    .removeIf(node1 -> node1.getNodePort() == connectedNode.getNodePort()
+                            && Objects.equals(node1.getNodeIp(), connectedNode.getNodeIp()));
+            if (remove) {
+                logger.debug("Node removed successfully [{}]", getRoutingTableValues());
+            } else {
+                logger.debug("Node remove failed [{}]", getRoutingTableValues());
+            }
+            return remove;
         } else {
             logger.error("Node already left from the routing table");
-            throw new Exception("Node already left from the routing table");
+            return false;
         }
+    }
+
+    private boolean isInTable(String url, int port) {
+        return routingTable.stream().anyMatch(connectedNode -> connectedNode.getNodePort() == port && Objects.equals(connectedNode.getNodeIp(), url));
     }
 
     public List<ConnectedNode> getRoutingTable() {
@@ -88,7 +104,6 @@ public class RoutingService {
         if (routingTable.isEmpty()) {
             logger.debug("No neighbours in the routing table");
         }
-
         routingTable.forEach(connectedNode -> {
             SearchRequest request = new SearchRequest(searchRequest.getIpAddress(),
                     searchRequest.getPort(),
@@ -96,6 +111,12 @@ public class RoutingService {
                     searchRequest.getHops() + 1);
             logger.debug("Sending search request");
             node.send(request, connectedNode.getNodeIp(), connectedNode.getNodePort());
+        });
+    }
+    public void broadCast(Protocol protocol) {
+        routingTable.forEach(connectedNode -> {
+            logger.debug("Sending message to node [{}]", new Gson().toJson(connectedNode));
+            node.send(protocol, connectedNode.getNodeIp(), connectedNode.getNodePort());
         });
     }
 }

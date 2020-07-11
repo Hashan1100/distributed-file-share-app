@@ -12,7 +12,7 @@ public class LeaveResponse extends Protocol {
     }
 
     public LeaveResponse(List<String> messagePartList) {
-        super(messagePartList.get(0), COMMAND.REG);
+        super(messagePartList.get(0), COMMAND.LEAVEOK);
         this.value = messagePartList.get(2);
     }
 
@@ -29,5 +29,9 @@ public class LeaveResponse extends Protocol {
         String protocolStringPart = getProtocolStringPart();
         String length = String.format("%04d", protocolStringPart.length() + 4);
         super.setLength(length);
+    }
+
+    public String getValue() {
+        return value;
     }
 }

@@ -1,5 +1,6 @@
 package com.uom.dist.node.service;
 
+import com.google.gson.Gson;
 import com.uom.dist.node.service.domain.ConnectedNode;
 import com.uom.dist.protocol.LeaveRequest;
 import com.uom.dist.protocol.LeaveResponse;
@@ -11,14 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.List;
+import java.util.Objects;
+
 @Component
 public class LeaveNodeService {
     @Autowired
     private Node node;
-
-    @Value("${node.username}")
-    private String nodeUserName;
 
     @Value("${udp.receiver.port}")
     private int udpPort;
@@ -26,16 +27,19 @@ public class LeaveNodeService {
     @Value("${udp.receiver.url}")
     private String udpUrl;
 
+    private static final String LEAVE_ERROR_CODE = "9999";
+    private static final String LEAVE_SUCCESS_CODE = "0";
+
     @Autowired
     private RoutingService routingService;
 
-    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LeaveNodeService.class);
 
+    @PreDestroy
     public void sendLeaveRequest() {
-        String port = Integer.toString(udpPort);
-        LeaveRequest leaveRequest = new LeaveRequest(udpUrl, port, nodeUserName);
-        logger.debug("Sending leave request, url: [{}], port: [{}], username: [{}]", udpUrl, port, nodeUserName);
-        node.send(leaveRequest, udpUrl, udpPort);
+        LeaveRequest leaveRequest = new LeaveRequest(udpUrl, udpPort + "");
+        logger.debug("Sending leave requests");
+        routingService.broadCast(leaveRequest);;
     }
 
     public void handleLeaveRequest(@NonNull LeaveRequest leaveRequest) {
@@ -43,34 +47,32 @@ public class LeaveNodeService {
             String ip = leaveRequest.getIpAddress();
             int port = Integer.parseInt(leaveRequest.getPort());
 
-            List<ConnectedNode> connectedNodes = routingService.getRoutingTable();
-            ConnectedNode connectedNode = new ConnectedNode(ip, port);
-            // If it does not contain the requested node
-            if (!connectedNodes.contains(connectedNode)) {
-                throw new Exception("Node not available in private routing table");
+            boolean result = routingService.removeFromNodeList(ip, port);
+            if (result) {
+                logger.debug("Leave successful for ip [{}] port [{}]", ip, port);
+                sendLeaveResponse(LEAVE_SUCCESS_CODE, ip, port);
+            } else {
+                logger.debug("Leave failed for ip [{}] port [{}]", ip, port);
+                sendLeaveResponse(LEAVE_ERROR_CODE, ip, port);
             }
-            // If connected nodes exists
-            connectedNodes.remove(connectedNode);
         } catch (Exception e) {
             logger.error("Error occurred while handling leave request", e);
         }
     }
 
-    public void sendLeaveResponse() {
-        String leaveResponseString = Protocol.COMMAND.LEAVE.toString();
-        LeaveResponse leaveResponse = new LeaveResponse(leaveResponseString);
-        logger.debug("Sending leave response: [{}]", leaveResponseString);
-        node.send(leaveResponse, udpUrl, udpPort);
+    public void sendLeaveResponse(String errorCode, String url, int port) {
+        LeaveResponse leaveResponse = new LeaveResponse(errorCode);
+        logger.debug("Sending leave response: [{}]", leaveResponse.serialize());
+        node.send(leaveResponse, url, port);
     }
 
-    public void handleLeaveResponse(@NonNull LeaveResponse leaveResponse) {
-        try {
-            if (leaveResponse.getCommand() != Protocol.COMMAND.LEAVE) {
-                throw new Exception("Invalid leave response");
-            }
-            logger.debug("Leave response received");
-        } catch (Exception e) {
-            logger.error("Error occurred while handling leave response", e);
+    public void handleLeaveResponse(@NonNull LeaveResponse leaveResponse, String url, int port) {
+        logger.debug("Leave response received [{}]", leaveResponse.serialize());
+        if(Objects.equals(leaveResponse.getValue(), LEAVE_SUCCESS_CODE)) {
+            routingService.removeFromNodeList(url, port);
+        } else {
+            logger.debug("Leave response received with error code");
         }
+
     }
 }

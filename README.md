@@ -21,3 +21,24 @@
 nc -u <node-ip> <port>
 ```
 * Enter command ```PRINT``` and press Enter
+
+## How to test file search (In linux)
+
+```$xslt
+echo <request_length> SER <node_port> <node_ip> \"<file_name>\" 0 > /dev/udp/<node_ip>/<node_port>
+```
+* Result file urls will be printed in <node_port> <node_ip> is debug log.
+
+## How to get multiple nodes
+
+* Build the application
+* Go to ```/target/network-node/conf/application.properties```
+* Change following parameters accordingly
+```$xslt
+server.port=
+node.username=
+udp.receiver.port=
+udp.receiver.url=
+file.list=
+```
+* Each node should have **unique udp.receiver.port or udp.receiver.url or both and unique user name.**

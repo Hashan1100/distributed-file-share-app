@@ -14,7 +14,7 @@ public class JoinRequest extends Protocol {
     }
 
     public JoinRequest(List<String> messagePartList) {
-        super(messagePartList.get(0), COMMAND.REG);
+        super(messagePartList.get(0), COMMAND.JOIN);
         this.ipAddress = messagePartList.get(2);
         this.port = messagePartList.get(3);
     }

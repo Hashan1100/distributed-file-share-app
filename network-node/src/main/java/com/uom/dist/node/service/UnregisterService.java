@@ -5,8 +5,11 @@ import com.uom.dist.protocol.UnRegisterRequest;
 import com.uom.dist.protocol.UnRegisterResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
 
 @Component
 public class UnregisterService {
@@ -25,23 +28,19 @@ public class UnregisterService {
     @Value("${udp.receiver.url}")
     private String udpUrl;
 
-    private RoutingService routingService;
-
-    public String status;
+    @Autowired
+    private Node node;
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterService.class);
 
-    public void Unregister() {
+    @PreDestroy
+    public void unregister() {
         Protocol unRegisterRequest = new UnRegisterRequest(udpUrl, udpPort + "", nodeUserName);
         logger.debug("Sending unregister request [{}]", unRegisterRequest.serialize());
+        node.send(unRegisterRequest, bootstrapServerUrl, bootstrapServerPort);
     }
 
-    public void UnregisterResponseHandler(UnRegisterResponse unregisterResponse) throws Exception {
-        try{
-            status = unregisterResponse.getValue();
-            logger.debug("Sending unregister response [{}]" + status, unregisterResponse.serialize());
-        }catch (Exception e){
-            logger.debug("Respoding to unregister failed...");
-        }
+    public void unregisterResponseHandler(UnRegisterResponse unregisterResponse) {
+        logger.debug("Sending unregister response : [{}]", unregisterResponse.serialize());
     }
 }
