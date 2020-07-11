@@ -28,3 +28,9 @@
         ```shell script
             cd bootstrap-server/target/bootstrap-server/bin && ./bootstrap-server console
         ``` 
+* Logs (`module-name-debug.log` and `module-name-error.log` logs) will appear after running the instance in this `<module-name>/target/uom/logs/<module-name>` location.
+    * To see the logs we can run:-
+
+        ```shell script
+            cd bootstrap-server/target/uom/logs/bootstrap-server && tail -f bootstrap-server-debug.log
+        ``` 
