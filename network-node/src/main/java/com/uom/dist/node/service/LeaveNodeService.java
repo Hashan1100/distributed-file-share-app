@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.List;
+
 @Component
 public class LeaveNodeService {
     @Autowired
@@ -31,6 +33,7 @@ public class LeaveNodeService {
 
     private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
+    @PreDestroy
     public void sendLeaveRequest() {
         String port = Integer.toString(udpPort);
         LeaveRequest leaveRequest = new LeaveRequest(udpUrl, port, nodeUserName);
@@ -52,7 +55,7 @@ public class LeaveNodeService {
             // If connected nodes exists
             connectedNodes.remove(connectedNode);
         } catch (Exception e) {
-            logger.error("Error occurred while handling leave request", e);
+            logger.error("Error occurred while handling leave request: [{}]", e.getMessage());
         }
     }
 
