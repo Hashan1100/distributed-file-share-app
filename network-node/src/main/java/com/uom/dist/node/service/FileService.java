@@ -49,14 +49,20 @@ public class FileService {
     @Autowired
     private Node node;
 
+    @Value("${search.request.cache.validity.time}")
+    private Long cacheValidityTime;
+
+    @Value("${search.request.cache.size}")
+    private Long cacheSize;
+
     private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     @PostConstruct
     public void init(){
         this.loadingCache = CacheBuilder
                 .newBuilder()
-                .maximumSize(100)
-                .expireAfterAccess(5, TimeUnit.SECONDS)
+                .maximumSize(cacheSize)
+                .expireAfterAccess(cacheValidityTime, TimeUnit.SECONDS)
                 .build(
                         new CacheLoader<String, SearchRequest>() {
                             public SearchRequest load(String message) throws Exception {
@@ -85,6 +91,9 @@ public class FileService {
         logger.debug("Search response arrived: [{}]", new Gson().toJson(searchResponse));
         if (searchResponse.getNoOfFiles() > 0) {
             logger.debug("Files found: [{}]", searchResponse.getFileNames());
+            searchResponse.getFileNames().forEach(name -> {
+                logger.debug("File URL: [{}]", searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
+            });
         } else {
             logger.debug("Files not found: [{}]", searchResponse.getFileNames());
         }
@@ -92,9 +101,9 @@ public class FileService {
 
     public void search(SearchRequest searchRequest) throws Exception {
         try {
-            SearchRequest request = loadingCache.getIfPresent(searchRequest.serialize());
+            SearchRequest request = loadingCache.getIfPresent(searchRequest.cacheKey());
             if (request == null) {
-                loadingCache.put(searchRequest.serialize(), searchRequest);
+                loadingCache.put(searchRequest.cacheKey(), searchRequest);
                 List<String> files = fileService.findFile(searchRequest.getFileName());
                 if (!files.isEmpty()) {
                     SearchResponse searchResponse = new SearchResponse(files.size(), udpUrl, udpPort + "",
@@ -103,7 +112,7 @@ public class FileService {
                             searchRequest.getIpAddress(), searchRequest.getPort());
                     node.send(searchResponse, searchRequest.getIpAddress(), Integer.parseInt(searchRequest.getPort()));
                 } else {
-                    logger.debug("Files not found propagating the search request to naibour nodes");
+                    logger.debug("Files not found propagating the search request to neighbour nodes");
                     routingService.sendSearchRequests(searchRequest);
                 }
             } else {

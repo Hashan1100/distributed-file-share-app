@@ -32,6 +32,9 @@ public class Node {
     private RegisterService registerService;
 
     @Autowired
+    private LeaveNodeService leaveNodeService;
+
+    @Autowired
     private UnregisterService unregisterService;
 
     @Autowired
@@ -39,6 +42,9 @@ public class Node {
 
     @Autowired
     private ProtocolFactory protocolFactory;
+
+    @Autowired
+    private JoinService joinService;
 
     @PostConstruct
     public void init() {
@@ -63,7 +69,10 @@ public class Node {
                 byte[] data = incoming.getData();
                 s = new String(data, 0, incoming.getLength());
 
-                logger.debug(incoming.getAddress().getHostAddress() + " : " + incoming.getPort() + " - " + s);
+                String hostAddress = incoming.getAddress().getHostAddress();
+                int port = incoming.getPort();
+
+                logger.debug(hostAddress + " : " + port + " - " + s);
 
                 try {
                     Protocol request = protocolFactory.decode(s);
@@ -74,6 +83,14 @@ public class Node {
                         fileService.search((SearchRequest) request);
                     } else if (request instanceof SearchResponse) {
                         fileService.handleSearchResponse((SearchResponse) request);
+                    } else if (request instanceof LeaveRequest) {
+                        leaveNodeService.handleLeaveRequest((LeaveRequest) request);
+                    } else if (request instanceof LeaveResponse) {
+                        leaveNodeService.handleLeaveResponse((LeaveResponse) request);
+                    } else if (request instanceof JoinRequest) {
+                        joinService.handleJoin((JoinRequest) request);
+                    } else if (request instanceof JoinResponse) {
+                        joinService.handleJoinResponse((JoinResponse) request, hostAddress, port);
                     } else if (request instanceof UnRegisterRequest) {
                         unregisterService.Unregister();
                     } else if (request instanceof UnRegisterResponse){

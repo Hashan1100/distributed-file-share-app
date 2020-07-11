@@ -6,7 +6,7 @@ public class JoinRequest extends Protocol {
     private String ipAddress;
     private String port;
 
-    public JoinRequest(String ipAddress, String port, String userName) {
+    public JoinRequest(String ipAddress, String port) {
         super(COMMAND.JOIN);
         this.ipAddress = ipAddress;
         this.port = port;
