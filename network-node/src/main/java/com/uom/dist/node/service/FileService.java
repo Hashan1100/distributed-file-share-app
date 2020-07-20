@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -70,6 +69,11 @@ public class FileService {
                                 return (SearchRequest) decode;
                             }
                         });
+    }
+
+    public boolean isFileAvailable(String fileName) {
+        logger.debug("Checking availability of a file with file name [{}]", fileName);
+        return fileList.contains(fileName);
     }
 
     public List<String> findFile(String fileName) throws Exception {
