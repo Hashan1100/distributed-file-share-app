@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.Gson;
+import com.uom.dist.node.service.shell.Shell;
 import com.uom.dist.protocol.Protocol;
 import com.uom.dist.protocol.SearchRequest;
 import com.uom.dist.protocol.SearchResponse;
@@ -36,8 +37,14 @@ public class FileService {
     @Autowired
     private RoutingService routingService;
 
+    @Autowired
+    private Shell shell;
+
     @Value("${udp.receiver.port}")
     private int udpPort;
+
+    @Value("${server.port}")
+    private int tcpPort;
 
     @Value("${udp.receiver.url}")
     private String udpUrl;
@@ -97,6 +104,7 @@ public class FileService {
             logger.debug("Files found: [{}]", searchResponse.getFileNames());
             searchResponse.getFileNames().forEach(name -> {
                 logger.debug("File URL: [{}]", searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
+                shell.print("File URL: http://"+ searchResponse.getIp() + ":" + searchResponse.getPort() +"/download?fileName=" + name.replaceAll("^\"|\"$", ""));
             });
         } else {
             logger.debug("Files not found: [{}]", searchResponse.getFileNames());
@@ -110,7 +118,7 @@ public class FileService {
                 loadingCache.put(searchRequest.cacheKey(), searchRequest);
                 List<String> files = fileService.findFile(searchRequest.getFileName());
                 if (!files.isEmpty()) {
-                    SearchResponse searchResponse = new SearchResponse(files.size(), udpUrl, udpPort + "",
+                    SearchResponse searchResponse = new SearchResponse(files.size(), udpUrl, tcpPort + "",
                             searchRequest.getHops() + 1, files);
                     logger.debug("Files found sending search response to origin node url: [{}], port: [{}]",
                             searchRequest.getIpAddress(), searchRequest.getPort());
@@ -127,5 +135,10 @@ public class FileService {
             logger.error("Error while fetching from the cache ", e);
             throw new Exception("Error while fetching from the cache");
         }
+    }
+
+    public void handleSearchCommand(String fileName) throws Exception {
+        SearchRequest searchRequest = new SearchRequest(udpUrl, udpPort + "", "\"" + fileName + "\"", 0);
+        search(searchRequest);
     }
 }
