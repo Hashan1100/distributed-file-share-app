@@ -28,7 +28,7 @@ public class NetworkNodeController {
 	}
 
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public ResponseEntity<Resource> download(@RequestParam("fileName") String fileName, HttpServletRequest request) throws Exception {
-		return downloadService.getResponse(fileName);
+	public ResponseEntity<Resource> download(@RequestParam("fileName") String fileName) {
+		return downloadService.getResponse(fileName.replaceAll("^\"|\"$", ""));
 	}
 }

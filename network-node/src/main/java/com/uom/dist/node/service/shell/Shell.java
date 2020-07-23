@@ -1,7 +1,6 @@
 package com.uom.dist.node.service.shell;
 
-import com.uom.dist.node.service.FileService;
-import com.uom.dist.node.service.RoutingService;
+import com.uom.dist.node.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,9 +23,27 @@ public class Shell {
     @Value("${node.username}")
     private String nodeUserName;
 
-    private enum  COMMAND {search, unreg, print, exit}
+    @Autowired
+    private LeaveNodeService leaveNodeService;
+
+    @Autowired
+    private UnregisterService unregisterService;
+
+    @Autowired
+    private RegisterService registerService;
+
+    private enum  COMMAND {search, unreg, print, exit, reg, leave, help}
 
     private String prompt = "node Shell>";
+
+    private String helpString = "" +
+            "search <filename>    search for a file" +
+            "\nunreg                unregister from the bootstrap server" +
+            "\nprint                print routing table data" +
+            "\nexit                 exit from the console" +
+            "\nreg                  register to the bootstrap server" +
+            "\nleave                leave from the network" +
+            "\nhelp                 get command information";
 
     @PostConstruct
     public void init() {
@@ -35,6 +52,7 @@ public class Shell {
 
     public void runTerminal() {
         Scanner scan = new Scanner(System.in);
+        System.out.println("To get command information enter command help");
         prompt = "node "+ nodeUserName +" Shell>";
         System.out.print(prompt);
         while (true) {
@@ -45,7 +63,7 @@ public class Shell {
                 if (COMMAND.exit.name().equals(result)) {
                     break;
                 }
-                System.out.println(result);
+                System.out.print(result);
             } catch (IllegalArgumentException e) {
                 System.out.println("Invalid command");
             }
@@ -80,7 +98,17 @@ public class Shell {
                 }
             }
             case print: return routingService.getRoutingTableValues();
+            case leave: {
+                leaveNodeService.sendLeaveRequest();
+                return "";
+            }
+            case unreg: {
+                unregisterService.unregister();
+                return "";
+            }
+            case reg: registerService.register();
             case exit: return command.name();
+            case help: return helpString;
             default: return "invalid command";
         }
     }

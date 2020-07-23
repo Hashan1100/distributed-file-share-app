@@ -93,7 +93,11 @@ public class RoutingService {
         logger.debug("Routing table : [{}]", routingTableString);
         System.out.println(routingTableString);
         PrintResponse response = new PrintResponse(routingTableString);
-        node.send(response, url, port);
+        try {
+            node.send(response, url, port);
+        } catch (Exception e) {
+            logger.error("Error occurred");
+        }
     }
 
     public String getRoutingTableValues() {
@@ -110,13 +114,21 @@ public class RoutingService {
                     searchRequest.getFileName(),
                     searchRequest.getHops() + 1);
             logger.debug("Sending search request");
-            node.send(request, connectedNode.getNodeIp(), connectedNode.getNodePort());
+            try {
+                node.send(request, connectedNode.getNodeIp(), connectedNode.getNodePort());
+            } catch (Exception e) {
+                logger.error("Error occurred");
+            }
         });
     }
     public void broadCast(Protocol protocol) {
         routingTable.forEach(connectedNode -> {
             logger.debug("Sending message to node [{}]", new Gson().toJson(connectedNode));
-            node.send(protocol, connectedNode.getNodeIp(), connectedNode.getNodePort());
+            try {
+                node.send(protocol, connectedNode.getNodeIp(), connectedNode.getNodePort());
+            } catch (Exception e) {
+                logger.error("Error occurred");
+            }
         });
     }
 }

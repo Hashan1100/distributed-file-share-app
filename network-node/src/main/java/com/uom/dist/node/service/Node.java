@@ -113,15 +113,19 @@ public class Node {
         }
     }
 
-    public void send(Protocol protocol, String url, int port) {
+    public void send(Protocol protocol, String url, int port) throws Exception {
         if (sock != null) {
             String msgString = protocol.serialize();
             logger.debug("Sending request [{}]", msgString);
             try {
                 DatagramPacket sendPacket = new DatagramPacket(msgString.getBytes() , msgString.getBytes().length , InetAddress.getByName(url), port);
                 sock.send(sendPacket);
+            } catch (IOException ex) {
+                logger.debug("Error occurred while trying to send the request", ex);
+                throw ex;
             } catch (Exception e) {
                 logger.debug("Error occurred while trying to send the request", e);
+                throw e;
             }
         }
     }

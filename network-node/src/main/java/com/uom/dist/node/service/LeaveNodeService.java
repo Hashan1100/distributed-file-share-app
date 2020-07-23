@@ -2,6 +2,7 @@ package com.uom.dist.node.service;
 
 import com.google.gson.Gson;
 import com.uom.dist.node.service.domain.ConnectedNode;
+import com.uom.dist.node.service.shell.Shell;
 import com.uom.dist.protocol.LeaveRequest;
 import com.uom.dist.protocol.LeaveResponse;
 import com.uom.dist.protocol.Protocol;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Component
@@ -30,8 +32,16 @@ public class LeaveNodeService {
     private static final String LEAVE_ERROR_CODE = "9999";
     private static final String LEAVE_SUCCESS_CODE = "0";
 
+    private Map<String, String> leaveNodeErrorMap = Map.of(
+            "0","successful",
+            "9999","error while adding new node to routing table"
+    );
+
     @Autowired
     private RoutingService routingService;
+
+    @Autowired
+    private Shell shell;
 
     private static final Logger logger = LoggerFactory.getLogger(LeaveNodeService.class);
 
@@ -63,7 +73,11 @@ public class LeaveNodeService {
     public void sendLeaveResponse(String errorCode, String url, int port) {
         LeaveResponse leaveResponse = new LeaveResponse(errorCode);
         logger.debug("Sending leave response: [{}]", leaveResponse.serialize());
-        node.send(leaveResponse, url, port);
+        try {
+            node.send(leaveResponse, url, port);
+        } catch (Exception e) {
+            logger.error("Error occurred");
+        }
     }
 
     public void handleLeaveResponse(@NonNull LeaveResponse leaveResponse, String url, int port) {
@@ -74,5 +88,7 @@ public class LeaveNodeService {
             logger.debug("Leave response received with error code");
         }
 
+        String status = leaveNodeErrorMap.get(leaveResponse.getValue());
+        shell.print("Leave network status: [" + leaveResponse.getValue() + "] " + " status description: [" + status + "]");
     }
 }

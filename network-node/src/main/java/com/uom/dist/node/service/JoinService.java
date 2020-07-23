@@ -34,7 +34,11 @@ public class JoinService {
 
     public void join(ConnectedNode connectedNode) {
         Protocol joinRequest = new JoinRequest(url, port + "");
-        server.send(joinRequest, connectedNode.getNodeIp(), connectedNode.getNodePort());
+        try {
+            server.send(joinRequest, connectedNode.getNodeIp(), connectedNode.getNodePort());
+        } catch (Exception e) {
+            logger.debug("Error occurred");
+        }
     }
 
     public void handleJoin(JoinRequest joinRequest) {
@@ -58,7 +62,11 @@ public class JoinService {
 
     public void sendJoinResponse(String ipAddress, String port, String status) {
         JoinResponse joinResponse = new JoinResponse(status);
-        server.send(joinResponse, ipAddress, Integer.parseInt(port));
+        try {
+            server.send(joinResponse, ipAddress, Integer.parseInt(port));
+        } catch (Exception e) {
+            logger.debug("Error occurred");
+        }
     }
 
     public void handleJoinResponse(JoinResponse joinResponse, String ipAddress, int port) {

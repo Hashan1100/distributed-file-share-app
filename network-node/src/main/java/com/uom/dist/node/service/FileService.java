@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -63,8 +65,17 @@ public class FileService {
 
     private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
+    private Map<String, String> searchStatusCodeMap = Map.of(
+            "0", "no matching results. Searched key is not in key table",
+            "9999", "failure due to node unreachable",
+            "9998", "some other error."
+    );
+
+    private static final int NODE_UNREACHABLE = 9999;
+    private static final int ERROR = 9998;
+
     @PostConstruct
-    public void init(){
+    public void init() {
         this.loadingCache = CacheBuilder
                 .newBuilder()
                 .maximumSize(cacheSize)
@@ -104,10 +115,16 @@ public class FileService {
             logger.debug("Files found: [{}]", searchResponse.getFileNames());
             searchResponse.getFileNames().forEach(name -> {
                 logger.debug("File URL: [{}]", searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
-                shell.print("File URL: http://"+ searchResponse.getIp() + ":" + searchResponse.getPort() +"/download?fileName=" + name.replaceAll("^\"|\"$", ""));
+                shell.print("File URL: http://" + searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
             });
+        } else if (searchResponse.getNoOfFiles() == NODE_UNREACHABLE) {
+            logger.debug("Node was not reachable [{}]", searchResponse.serialize());
+        } else if (searchResponse.getNoOfFiles() == ERROR) {
+            logger.debug("Error occurred while searching [{}] [{}]",
+                    searchResponse.serialize(), searchStatusCodeMap.get(searchResponse.getNoOfFiles() + ""));
         } else {
-            logger.debug("Files not found: [{}]", searchResponse.getFileNames());
+            logger.debug("Files not found: [{}] [{}]",
+                    searchResponse.getFileNames(), searchStatusCodeMap.get(searchResponse.getNoOfFiles() + ""));
         }
     }
 
@@ -131,8 +148,15 @@ public class FileService {
                 logger.debug("Search request: [{}] already in the cache, So assuming request has already arrived " +
                         "in this node. ignoring the request", request.serialize());
             }
+        } catch (IOException ex) {
+            SearchResponse searchResponse = new SearchResponse(NODE_UNREACHABLE, udpUrl, tcpPort + "",
+                    searchRequest.getHops() + 1, "");
+            node.send(searchResponse, searchRequest.getIpAddress(), Integer.parseInt(searchRequest.getPort()));
         } catch (Exception e) {
             logger.error("Error while fetching from the cache ", e);
+            SearchResponse searchResponse = new SearchResponse(ERROR, udpUrl, tcpPort + "",
+                    searchRequest.getHops() + 1, "");
+            node.send(searchResponse, searchRequest.getIpAddress(), Integer.parseInt(searchRequest.getPort()));
             throw new Exception("Error while fetching from the cache");
         }
     }
