@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -101,8 +102,10 @@ public class FileService {
         logger.debug("Finding files with for the file name: [{}]", fileName);
         List<String> files = fileList
                 .stream()
+                .filter(Objects::nonNull)
                 .filter(fileElement ->
-                        fileElement.contains(fileName.replaceAll("^\"|\"$", "")))
+                        fileElement.toLowerCase()
+                                .contains(fileName.toLowerCase().replaceAll("^\"|\"$", "")))
                 .map(file -> "\"" + file + "\"")
                 .collect(Collectors.toList());
         logger.debug("Files found: [{}] in node: [{}]", files, nodeUserName);
@@ -139,6 +142,8 @@ public class FileService {
                             searchRequest.getHops() + 1, files);
                     logger.debug("Files found sending search response to origin node url: [{}], port: [{}]",
                             searchRequest.getIpAddress(), searchRequest.getPort());
+                    logger.debug("HOPS_COUNT :[{}] file name: [{}] node: [{}]",
+                            searchRequest.getHops() + 1, searchRequest.getFileName(), nodeUserName);
                     node.send(searchResponse, searchRequest.getIpAddress(), Integer.parseInt(searchRequest.getPort()));
                 } else {
                     logger.debug("Files not found propagating the search request to neighbour nodes");
