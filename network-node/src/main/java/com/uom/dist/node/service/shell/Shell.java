@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.Instant;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -94,7 +95,7 @@ public class Shell {
                     return command + " must contain a value";
                 } else {
                     fileService.handleSearchCommand(value);
-                    return "";
+                    return "Timestamp: [" + Instant.now().toEpochMilli() + "]";
                 }
             }
             case print: return routingService.getRoutingTableValues();

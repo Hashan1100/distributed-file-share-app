@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -120,6 +121,8 @@ public class FileService {
                 logger.debug("File URL: [{}]", searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
                 shell.print("File URL: http://" + searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
             });
+            shell.print("Hops: [" + searchResponse.getHops() + "]");
+            shell.print("Timestamp: [" + Instant.now().toEpochMilli() + "]");
         } else if (searchResponse.getNoOfFiles() == NODE_UNREACHABLE) {
             logger.debug("Node was not reachable [{}]", searchResponse.serialize());
         } else if (searchResponse.getNoOfFiles() == ERROR) {
