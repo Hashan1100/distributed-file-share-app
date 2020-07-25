@@ -70,6 +70,20 @@ ex :
 * If manual arrays are not set script will generate default values
 * Each array element count should match the ```node_count```. If not script will again generate default configuration values
 * Once script is completed result will appear in ```release/nodes```.
+* Inside ```release/nodes``` all nodes will be generated. To provide the file list for each node we can change in the ```application.properties``` file, located under ```release\nodes\node-<node_no>\network-node-<node_no>\conf```.
+
+Eg:
+
+ - In  ```release\nodes\node-1\network-node-1\conf\application.properties``` file list as below:
+ 
+ ```file.list=Adventures of Tintin,Jack and Jill,Glee,The Vampire Diarie,King Arthur,Turn Up The Music,Microsoft Office 2010```
+ 
+ - In ```release\nodes\node-2\network-node-2\conf\application.properties``` file list as below:
+ 
+ ```file.list=Windows XP,Harry Potter,Kung Fu Panda,Lady Gaga,Twilight,Windows 8,Mission Impossible,American Idol,Happy Feet```
+ 
+ 
+ 
 
 ## How Change node configurations manually after deployment
 
