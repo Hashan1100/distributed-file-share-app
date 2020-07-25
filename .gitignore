@@ -225,3 +225,5 @@ gradle-app.setting
 *.code-workspace
 
 .m2
+
+release/*
