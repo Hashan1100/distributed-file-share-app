@@ -48,7 +48,7 @@ public class RegisterService {
     private Map<String, String> registerStatusCodeMap = Map.of(
             "0","request is successful, no nodes in the system",
             "1","request is successful, 1 contact is returned",
-            "2","request is successful, 2 nodes contacts is returned",
+            "2","request is successful, 2 nodes contacts returned",
             "9999","failed, there is some error in the command",
             "9998","failed, already registered to you, unregister first",
             "9997","failed, registered to another user, try a different IP and port",

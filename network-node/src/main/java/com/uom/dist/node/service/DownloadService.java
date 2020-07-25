@@ -1,5 +1,6 @@
 package com.uom.dist.node.service;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class DownloadService {
     public byte[] getFile(String fileName) throws Exception {
         if (fileService.isFileAvailable(fileName)) {
             int randomValue = getRandomValue();
-            byte[] fixedFileSizeByteArray = new byte[1024 * 1024 * getRandomValue()];
+            byte[] fixedFileSizeByteArray = new byte[1024 * 1024 * randomValue];
             byte[] fileContent = content(randomValue, fixedFileSizeByteArray);
             logger.debug("File context generated ...");
             return fileContent;
@@ -55,13 +56,13 @@ public class DownloadService {
         try {
             byte[] fileContent = getFile(fileName);
             byte[] sha1Byte = generateSha1Bytes(fileContent);
-            String sha1String = new String(sha1Byte);
-            logger.debug("SHA-1 file [{}] data is [{}]", fileName, sha1String);
+            String sha1Hex = DigestUtils.sha1Hex(sha1Byte);
+            logger.debug("SHA-1 file [{}] data is [{}]", fileName, sha1Hex);
             Resource file = new ByteArrayResource(fileContent);
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+ fileName)
-                    .header("sha1", sha1String)
+                    .header("sha1", sha1Hex)
                     .body(file);
         } catch (Exception e) {
             logger.error("File not found sending error response", e);

@@ -119,10 +119,10 @@ public class FileService {
             logger.debug("Files found: [{}]", searchResponse.getFileNames());
             searchResponse.getFileNames().forEach(name -> {
                 logger.debug("File URL: [{}]", searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
-                shell.print("File URL: http://" + searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
+                shell.printNoPrompt("File URL: http://" + searchResponse.getIp() + ":" + searchResponse.getPort() + "/download?fileName=" + name);
             });
-            shell.print("Hops: [" + searchResponse.getHops() + "]");
-            shell.print("Timestamp: [" + Instant.now().toEpochMilli() + "]");
+            shell.print("Hops: [" + searchResponse.getHops() + "]\n" +
+                    "Timestamp: [" + Instant.now().toEpochMilli() + "]");
         } else if (searchResponse.getNoOfFiles() == NODE_UNREACHABLE) {
             logger.debug("Node was not reachable [{}]", searchResponse.serialize());
         } else if (searchResponse.getNoOfFiles() == ERROR) {

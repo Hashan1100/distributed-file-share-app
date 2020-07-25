@@ -119,4 +119,8 @@ public class Shell {
         System.out.print(prompt);
     }
 
+    public void printNoPrompt(String entry) {
+        System.out.println("\n" + entry);
+    }
+
 }
