@@ -110,7 +110,7 @@ public class BootstrapServer {
                             sock.send(dpReply);
                         }
                     }
-                } else if (command.equals("ECHO")) {
+                } else if (command.replaceAll("[\\n\\t ]", "").equals("ECHO")) {
                     for (int i=0; i<nodes.size(); i++) {
                         echo(nodes.get(i).getIp() + " " + nodes.get(i).getPort() + " " + nodes.get(i).getUsername());
                     }
