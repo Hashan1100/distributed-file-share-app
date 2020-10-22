@@ -148,11 +148,10 @@ public class FileService {
                     logger.debug("HOPS_COUNT :[{}] file name: [{}] node: [{}]",
                             searchRequest.getHops() + 1, searchRequest.getFileName(), nodeUserName);
                     node.send(searchResponse, searchRequest.getIpAddress(), Integer.parseInt(searchRequest.getPort()));
-                    routingService.sendSearchRequests(searchRequest);
                 } else {
                     logger.debug("Files not found propagating the search request to neighbour nodes");
-                    routingService.sendSearchRequests(searchRequest);
                 }
+                routingService.sendSearchRequests(searchRequest);
             } else {
                 logger.debug("Search request: [{}] already in the cache, So assuming request has already arrived " +
                         "in this node. ignoring the request", request.serialize());
