@@ -1,6 +1,5 @@
 package com.uom.dist.bootstrap;
 
-import com.uom.dist.protocol.SharedConfigurationReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -12,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @SpringBootApplication
-@Import(SharedConfigurationReference.class)
 public class BootstrapServerApplication {
     private static final Logger logger = LoggerFactory.getLogger(BootstrapServerApplication.class);
 
